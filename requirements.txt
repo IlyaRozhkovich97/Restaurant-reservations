@@ -1,5 +1,6 @@
 asgiref
-Django
 sqlparse
 python-dotenv
 Pillow
+Django
+psycopg2-binary
