@@ -18,74 +18,33 @@ from .forms import ReservationForm, ContactForm
 from .tasks import send_confirmation_email_task
 
 
-def get_available_tables(date, time, guests):
-    """
-    Метод для получения доступных столиков на определенное время и дату
-    с учетом количества гостей.
-
-    Параметры:
-    - `date` (`date`): Дата бронирования.
-    - `time` (`str`): Время бронирования в формате "HH:MM".
-    - `guests` (`int`): Количество гостей.
-
-    Возвращает:
-    - Список доступных столиков или None, если столики не найдены.
-    """
-    time = datetime.strptime(time, "%H:%M").time()
-    datetime_booking = datetime.combine(date, time)
-    end_time = (datetime_booking + timedelta(hours=2)).time()
-    datetime_end_booking = datetime.combine(date, end_time)
-
-    # Поиск конфликтующих бронирований
-    conflicting_bookings = Booking.objects.filter(
-        date=date,
-        time__lt=datetime_end_booking,
-        time__gte=datetime_booking
-    )
-
-    reserved_tables = conflicting_bookings.values_list('tables', flat=True)
-    available_tables = Table.objects.exclude(id__in=reserved_tables)
-
-    # Выбор столиков по количеству гостей
-    tables_needed = (guests + 1) // 2
-    if available_tables.count() >= tables_needed:
-        return available_tables[:tables_needed]
-    return None
-
-
 class ReservationCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """
     Представление для создания нового бронирования.
 
-    Требует аутентификации пользователя и показывает сообщение об успехе
-    при успешном создании бронирования. Отправляет подтверждающее письмо
-    с помощью задачи Celery.
+    Требует аутентификации пользователя и показывает сообщение об успехе после создания бронирования.
+    Отправляет подтверждающее письмо с помощью Celery.
 
     Атрибуты:
-    - `model`: Модель Booking.
-    - `form_class`: Форма ReservationForm.
-    - `template_name`: Шаблон для создания бронирования.
-    - `success_message`: Сообщение об успешном создании бронирования.
+        model (Model): Модель, связанная с представлением, в данном случае `Booking`.
+        form_class (Form): Форма для создания бронирования, `ReservationForm`.
+        template_name (str): Путь к шаблону для отображения страницы создания бронирования.
+        success_message (str): Сообщение об успехе после создания бронирования.
 
     Методы:
-    - `form_valid`: Обрабатывает валидную форму, сохраняет бронирование и отправляет письмо.
-    - `get_success_url`: Возвращает URL для перенаправления после успешного создания бронирования.
-    - `get_available_tables`: Возвращает доступные столики для заданной даты, времени и количества гостей.
+        form_valid(form): Проверяет доступные столики и отправляет подтверждающее письмо.
+        get_success_url(): Возвращает URL для перенаправления после успешного создания бронирования.
+        get_available_tables(date, time, guests): Возвращает доступные столики для заданной даты и времени.
     """
-
     model = Booking
     form_class = ReservationForm
     template_name = 'booking/reservation_form.html'
     success_message = "Бронирование успешно создано!"
 
-    def __init__(self, **kwargs):
-        super().__init__(kwargs)
-        self.object = None
-
     def form_valid(self, form):
         form.instance.customer_user = self.request.user
         reservation = form.save(commit=False)
-        tables = get_available_tables(
+        tables = self.get_available_tables(
             form.cleaned_data.get('date'),
             form.cleaned_data.get('time'),
             form.cleaned_data.get('guests')
@@ -129,25 +88,56 @@ class ReservationCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
         """
         return reverse_lazy('booking:reservation_list')
 
+    def get_available_tables(self, date, time, guests):
+        """
+        Метод для получения доступных столиков на определенное время и дату с учетом количества гостей.
+
+        Аргументы:
+            date (date): Дата бронирования.
+            time (time): Время бронирования.
+            guests (int): Количество гостей.
+
+        Возвращает:
+            QuerySet: Доступные столики или None, если нет доступных столиков.
+        """
+        time = datetime.strptime(time, "%H:%M").time()
+        datetime_booking = datetime.combine(date, time)
+        end_time = (datetime_booking + timedelta(hours=2)).time()
+        datetime_end_booking = datetime.combine(date, end_time)
+
+        # Поиск конфликтующих бронирований
+        conflicting_bookings = Booking.objects.filter(
+            date=date,
+            time__lt=datetime_end_booking,
+            time__gte=datetime_booking
+        )
+
+        reserved_tables = conflicting_bookings.values_list('tables', flat=True)
+        available_tables = Table.objects.exclude(id__in=reserved_tables)
+
+        # Выбор столиков по количеству гостей
+        tables_needed = (guests + 1) // 2
+        if available_tables.count() >= tables_needed:
+            return available_tables[:tables_needed]
+        return None
+
 
 @method_decorator(login_required, name='dispatch')
 class CancelReservationView(SuccessMessageMixin, DeleteView):
     """
     Представление для отмены бронирования.
 
-    Требует аутентификации пользователя и показывает сообщение об успехе
-    при успешной отмене бронирования.
+    Требует аутентификации пользователя и показывает сообщение об успехе после отмены бронирования.
 
     Атрибуты:
-    - `model`: Модель Booking.
-    - `template_name`: Шаблон для подтверждения удаления бронирования.
-    - `success_url`: URL для перенаправления после успешной отмены бронирования.
-    - `success_message`: Сообщение об успешной отмене бронирования.
+        model (Model): Модель, связанная с представлением, в данном случае `Booking`.
+        template_name (str): Путь к шаблону для отображения страницы подтверждения удаления.
+        success_url (str): URL, на который будет перенаправлен пользователь после успешного удаления бронирования.
+        success_message (str): Сообщение об успехе после отмены бронирования.
 
     Методы:
-    - `delete`: Метод удаления бронирования с добавлением сообщения об успехе.
+        delete(request, *args, **kwargs): Удаляет бронирование и добавляет сообщение об успехе.
     """
-
     model = Booking
     template_name = 'booking/reservation_confirm_delete.html'
     success_url = reverse_lazy('booking:reservation_list')
@@ -168,11 +158,10 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
     Требует аутентификации пользователя.
 
     Атрибуты:
-    - `model`: Модель Booking.
-    - `template_name`: Шаблон для отображения деталей бронирования.
-    - `context_object_name`: Имя объекта в контексте шаблона.
+        model (Model): Модель, связанная с представлением, в данном случае `Booking`.
+        template_name (str): Путь к шаблону для отображения страницы деталей бронирования.
+        context_object_name (str): Имя контекста для объекта бронирования.
     """
-
     model = Booking
     template_name = 'booking/reservation_detail.html'
     context_object_name = 'reservation'
@@ -183,22 +172,24 @@ class ReservationListView(LoginRequiredMixin, ListView):
     """
     Представление для отображения списка бронирований текущего пользователя.
 
-    Требует аутентификации.
+    Требует аутентификации пользователя.
 
     Атрибуты:
-    - `model`: Модель Booking.
-    - `template_name`: Шаблон для отображения списка бронирований.
-    - `context_object_name`: Имя объекта в контексте шаблона.
+        model (Model): Модель, связанная с представлением, в данном случае `Booking`.
+        template_name (str): Путь к шаблону для отображения страницы списка бронирований.
+        context_object_name (str): Имя контекста для списка бронирований.
 
     Методы:
-    - `get_queryset`: Возвращает список бронирований текущего пользователя.
+        get_queryset(): Возвращает список бронирований текущего пользователя, отсортированный по дате и времени.
     """
-
     model = Booking
     template_name = 'booking/reservation_list.html'
     context_object_name = 'reservations'
 
     def get_queryset(self):
+        """
+        Возвращает список бронирований текущего пользователя, отсортированный по дате и времени.
+        """
         return Booking.objects.filter(customer_user=self.request.user).order_by('-date', '-time')
 
 
@@ -207,19 +198,21 @@ class HomeView(SuccessMessageMixin, ListView):
     Представление для отображения главной страницы.
 
     Атрибуты:
-    - `model`: Модель CoverImage.
-    - `template_name`: Шаблон главной страницы.
-    - `context_object_name`: Имя объекта в контексте шаблона.
+        model (Model): Модель, связанная с представлением, в данном случае `CoverImage`.
+        template_name (str): Путь к шаблону для отображения главной страницы.
+        context_object_name (str): Имя контекста для объекта `CoverImage`.
 
     Методы:
-    - `get_queryset`: Возвращает первое изображение обложки.
+        get_queryset(): Возвращает первый объект `CoverImage` для главной страницы.
     """
-
     model = CoverImage
     template_name = 'booking/home_page.html'
     context_object_name = 'cover_image'
 
     def get_queryset(self):
+        """
+        Возвращает первый объект `CoverImage`.
+        """
         return CoverImage.objects.first()
 
 
@@ -227,28 +220,22 @@ class ReservationUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     """
     Представление для обновления бронирования.
 
-    Требует аутентификации пользователя и показывает сообщение об успехе
-    при успешном обновлении бронирования.
+    Требует аутентификации пользователя и показывает сообщение об успехе после обновления бронирования.
 
     Атрибуты:
-    - `model`: Модель Booking.
-    - `form_class`: Форма ReservationForm.
-    - `template_name`: Шаблон для обновления бронирования.
-    - `success_message`: Сообщение об успешном обновлении бронирования.
+        model (Model): Модель, связанная с представлением, в данном случае `Booking`.
+        form_class (Form): Форма для обновления бронирования, `ReservationForm`.
+        template_name (str): Путь к шаблону для отображения страницы обновления бронирования.
+        success_message (str): Сообщение об успехе после обновления бронирования.
 
     Методы:
-    - `form_valid`: Обрабатывает валидную форму, обновляет бронирование и устанавливает столики.
-    - `get_success_url`: Возвращает URL для перенаправления после успешного обновления бронирования.
+        form_valid(form): Сохраняет обновленное бронирование и отображает сообщение об успехе.
+        get_success_url(): Возвращает URL для перенаправления после успешного обновления бронирования.
     """
-
     model = Booking
     form_class = ReservationForm
     template_name = 'booking/reservation_form.html'
     success_message = "Бронирование успешно обновлено!"
-
-    def __init__(self, **kwargs):
-        super().__init__(kwargs)
-        self.object = None
 
     def form_valid(self, form):
         """
@@ -273,36 +260,6 @@ class ReservationUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
         return reverse('booking:reservation_detail', kwargs={'pk': self.object.pk})
 
 
-def get(request):
-    selected_date = request.GET.get('date')
-    selected_time = request.GET.get('time')
-    guests = request.GET.get('guests')
-
-    available_tables_count = 0
-
-    if selected_date and selected_time and guests:
-        try:
-            guests_count = int(guests)
-
-            # Получение списка занятых столов
-            reserved_tables = Booking.objects.filter(
-                date=selected_date,
-                time=selected_time
-            ).values_list('tables__id', flat=True)
-
-            # Фильтрация доступных столов по количеству гостей
-            available_tables_count = Table.objects.filter(
-                capacity__gte=guests_count
-            ).exclude(
-                id__in=reserved_tables
-            ).count()
-
-        except (ValueError, ValidationError):
-            pass
-
-    return JsonResponse({'count': available_tables_count})
-
-
 class CheckAvailableTablesView(View):
     """
     Представление для проверки доступных столиков через AJAX запрос.
@@ -310,48 +267,71 @@ class CheckAvailableTablesView(View):
     Возвращает количество доступных столиков для заданной даты, времени и количества гостей.
 
     Методы:
-    - `get`: Обрабатывает GET-запрос, получает параметры даты, времени и количества гостей,
-      фильтрует доступные столики и возвращает их количество в формате JSON.
+        get(request): Обрабатывает GET-запрос и возвращает количество доступных столиков в формате JSON.
     """
 
+    def get(self, request):
+        selected_date = request.GET.get('date')
+        selected_time = request.GET.get('time')
+        guests = request.GET.get('guests')
 
-def get(request):
-    message = cache.get('my_key')
-    if not message:
-        message = 'Тест, Redis!'
-        cache.set('my_key', message, timeout=60 * 15)
-        print("Значения не было в кэше. Установка нового значения: " + message)
-    else:
-        print("Значение из кэша: " + message)
-    return render(request, 'booking/test_cache.html', {'value': message})
+        available_tables_count = 0
+
+        if selected_date and selected_time and guests:
+            try:
+                guests_count = int(guests)
+
+                # Получение списка занятых столов
+                reserved_tables = Booking.objects.filter(
+                    date=selected_date,
+                    time=selected_time
+                ).values_list('tables__id', flat=True)
+
+                # Фильтрация доступных столов по количеству гостей
+                available_tables_count = Table.objects.filter(
+                    capacity__gte=guests_count
+                ).exclude(
+                    id__in=reserved_tables
+                ).count()
+
+            except (ValueError, ValidationError):
+                pass
+
+        return JsonResponse({'count': available_tables_count})
 
 
 class MyView(View):
     """
     Пример представления для демонстрации работы с кэшем.
 
-    Метод `get` проверяет наличие значения в кэше и возвращает его. Если значения нет,
-    устанавливает его в кэш и выводит в консоль информацию о новом значении.
+    Методы: get(request): Обрабатывает GET-запрос, получает значение из кэша или устанавливает новое, если значение
+    отсутствует.
     """
+
+    def get(self, request):
+        message = cache.get('my_key')
+        if not message:
+            message = 'Тест, Redis!'
+            cache.set('my_key', message, timeout=60 * 15)
+            print("Значения не было в кэше. Установка нового значения: " + message)
+        else:
+            print("Значение из кэша: " + message)
+        return render(request, 'booking/test_cache.html', {'value': message})
 
 
 class ContactFormView(FormView):
     """
     Представление для обработки контактной формы.
 
-    Использует форму ContactForm для сбора данных от пользователя и отправки их по электронной почте.
-    После успешной отправки сообщения отображается сообщение об успешной отправке.
-
     Атрибуты:
-    - `template_name`: Шаблон для отображения формы.
-    - `form_class`: Форма ContactForm.
-    - `success_url`: URL для перенаправления после успешного отправления формы.
+        template_name (str): Путь к шаблону для отображения страницы контактной формы.
+        form_class (Form): Форма для обработки контактных сообщений, `ContactForm`.
+        success_url (str): URL для перенаправления после успешной отправки формы.
 
     Методы:
-    - `form_valid`: Обрабатывает валидную форму, отправляет сообщение по электронной почте и
-      добавляет сообщение об успешной отправке.
+        form_valid(form): Обрабатывает успешную отправку формы, отправляет email и отображает сообщение об успешной
+        отправке.
     """
-
     template_name = 'booking/contact.html'
     form_class = ContactForm
     success_url = reverse_lazy('booking:home')
