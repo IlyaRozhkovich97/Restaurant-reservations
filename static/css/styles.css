@@ -1,0 +1,492 @@
+@import url('https://fonts.googleapis.com/css?family=Big+Shoulders+Text:100,300,400,500,600,700,800,900&display=swap');
+
+body {
+    overflow-x: hidden;
+}
+
+
+h2 {
+    font-size: 3rem;
+    color: rgba(27, 2, 37, 0.833);
+
+}
+
+
+.contact-adress {
+    display: inline;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    flex-basis: 10%;
+
+}
+
+.flex-column-form h3 {
+    font-size: 50px;
+    color: rgba(27, 2, 37, 0.833);
+}
+
+
+.section-intro {
+    position: relative;
+    height: 820px;
+    background-image: url(https://res.cloudinary.com/dweybbjex/image/upload/v1687027797/oaergprtye0e45fvk0fr.jpg);
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    animation: section-zoom 10s infinite alternate;
+}
+
+.section-intro::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    transform-origin: center;
+    object-fit: cover;
+}
+
+@keyframes section-zoom {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+.section-intro h2 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 4em;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+.section-intro h1 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 4em;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+
+.section-intro header {
+    display: flex;
+    flex: 4;
+    flex-direction: column; /* Измените на column, если нужно вертикальное расположение */
+    justify-content: center; /* Центрирование по вертикали */
+    align-items: center; /* Центрирование по горизонтали */
+    text-align: center; /* Выровнять текст по центру */
+}
+
+
+
+.link-to-book-wrapper {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.about-section {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px 20px;
+}
+
+/* Keyframe Animation */
+@keyframes button-animation {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.link-to-book {
+    color: #ffffff;
+    display: block;
+    border: 2px solid #ffffff;
+    padding: 5px 10px;
+    transition: all 0.3s ease;
+    animation: button-animation 2s ease-in-out infinite;
+}
+
+a.link-to-book:hover {
+    background-color: rgba(27, 2, 37, 0.833);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.carousel-item {
+    height: 700px;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.carousel-inner {
+    height: 700px;
+
+}
+
+.row-flex {
+    flex-direction: row;
+}
+
+.flex-column-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 60px 10px;
+}
+
+.btn-primary {
+    background-color: #dc3545; /* Синий цвет */
+    border: none;
+    padding: 10px 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #dc3545; /* Темный синий на hover */
+}
+
+
+.btn-primary {
+    font-family: 'Big Shoulders Text',
+        cursive;
+    color: #ffffff;
+    background-color: rgb(50, 1, 48);
+    font-size: 18px;
+    padding: 8px 10px;
+    letter-spacing: 1px;
+    border-radius: 3px;
+    border: 0;
+
+}
+
+.btn-primary:hover {
+    background-color: #c82333;
+    text-decoration: none;
+}
+
+.btn.btn-link {
+    font-family: 'Big Shoulders Text', cursive;
+    color: #ffffff;
+    background-color: rgb(50, 1, 48);
+    font-size: 18px;
+    padding: 6px 10px;
+    letter-spacing: 1px;
+    border-radius: 3px;
+    border: 0;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.btn.btn-link:hover {
+    background-color: #c82333;
+}
+
+
+
+.opening-time,
+.contact-adress {
+    flex: 1;
+    font-size: 1.2em;
+}
+
+.form-group p {
+    font-size: 1.2em;
+    color: #ffffff;
+}
+
+.opening-time p span,
+.contact-adress p span {
+    display: block;
+}
+
+.content-heading {
+    flex-grow: 1;
+    padding: 20px;
+    border: 6px solid #ffffff;
+    margin-bottom: 20px;
+    background-color: rgba(27, 2, 37, 0.833);
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.content-heading h2 {
+    font-size: 30px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #ffffff;
+}
+
+.content-heading p {
+    font-size: 20px;
+    line-height: 1.5;
+    margin-bottom: 0;
+    font-family: Lato, sans-serif;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.footer {
+    background-color: rgba(54, 0, 75, 0.833);
+}
+
+
+.social-networks i {
+    font-size: 200%;
+    margin: 1%;
+    padding: 5%;
+    color: #ffffff;
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+
+.social-networks {
+    text-align: center;
+    margin: 0%;
+    padding: 0%
+}
+
+.social-networks>li {
+    display: inline;
+}
+
+.info-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: none;
+    margin: auto;
+}
+
+.reservation-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.form-group p {
+    margin-right: 10px;
+    color: rgba(27, 2, 37, 0.833);
+    font-weight: bold;
+}
+
+.small-input {
+    width: 50px;
+}
+
+.row-flex {
+    display: flex;
+}
+
+.flex-column-form {
+    flex: 1;
+}
+
+.reservation-text {
+    flex: 1;
+    margin: auto
+}
+
+
+.reservation-text p {
+    font-size: 20px;
+    line-height: 1.5;
+    margin-bottom: 0;
+    font-family: Lato, sans-serif;
+    font-weight: bold;
+    color: black;
+}
+
+.alert {
+    position: relative;
+    z-index: 9999;
+}
+
+@media screen and (max-width: 800px) {
+
+    ul.nav-flex-row {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+
+
+    .section-intro {
+        height: 500px;
+    }
+
+    .content-heading {
+        padding: 15px;
+    }
+
+    .content-heading h2 {
+        font-size: 25px;
+    }
+
+    .content-heading p {
+        font-size: 18px;
+    }
+
+    .about-section {
+        padding: 3em;
+        display: block;
+        width: 100%;
+    }
+
+    .carousel-inner {
+        height: auto;
+    }
+
+    .row-flex {
+        display: block;
+    }
+
+    .form-group p {
+        font-size: 15px;
+    }
+
+    .small-input {
+        width: 40px;
+    }
+
+    .section-intro h2 {
+        font-size: 35px;
+        text-align: center;
+    }
+}
+
+
+@media screen and (max-width: 500px) {
+
+    .section-intro::after {
+        animation: none
+    }
+
+    ul.nav-flex-row li {
+        font-size: 0.5em;
+        padding: 0.1em
+    }
+
+    .btn-primary {
+
+        margin-top: 5px;
+    }
+
+    .section-intro {
+        height: 300px;
+        animation: none
+    }
+
+    .section-intro h1 {
+        font-size: 1.5em;
+    }
+
+    .about-section {
+        padding: 3em;
+        display: block;
+        width: 100%;
+    }
+
+    .content-heading {
+        padding: 10px;
+    }
+
+    .content-heading h2 {
+        font-size: 20px;
+    }
+
+    .content-heading p {
+        font-size: 16px;
+    }
+
+    .carousel-inner {
+        height: auto;
+    }
+
+    .row-flex {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .section-intro h2 {
+        font-size: 30px;
+        text-align: center;
+    }
+
+    .row-flex h3 {
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .form-group p {
+        font-size: 13px;
+    }
+
+    .small-input {
+        width: 30px;
+    }
+
+    .opening-time p span,
+    .contact-adress p span {
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .btn-info {
+        margin-top: 10px;
+
+    }
+
+    .btn-danger {
+        margin-top: 10px;
+
+    }
+
+    .btn.btn-link {
+        margin-top: 10px;
+    }
+
+
+

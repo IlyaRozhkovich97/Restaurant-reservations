@@ -1,0 +1,13 @@
+<head>
+    <title>Верификация</title>
+</head>
+{% extends 'booking/base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-12 text-center" style="margin-top: 50px;">
+    <h1>
+        Вы успешно подтвердили свой email
+    </h1>
+    <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Перейти к авторизации</a>
+</div>
+{% endblock %}

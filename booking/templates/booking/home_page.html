@@ -1,0 +1,100 @@
+<head>
+    <title>Ресторан «ParkKing»</title>
+</head>
+<!-- Верх меню -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+{% extends "booking/base.html" %}
+
+{% block content %}
+
+{% include 'booking/navigation/upper_menu.html' %}
+
+<!-- Секция обложки -->
+<section class="section-intro position-relative">
+    {% if cover_image %}
+        <div class="cover-image-container">
+            <img src="{{ cover_image.image.url }}" alt="{{ cover_image.title }}" class="cover-image img-fluid w-100" style="max-height: 500px; object-fit: cover;">
+            <!-- Наложение текста и кнопки -->
+            <div class="cover-text-overlay text-center text-white">
+                <header class="section-header">
+                    <h1>Ресторан «ParkKing»</h1>
+                </header>
+                <div class="description mb-4">
+                    <p class="lead">
+                        Затерянный в Александровском парке, ресторан ParkKing как бы стал его неотъемлемой частью: основное здание, оформленное в современном стиле с классическими нотками, в сочетании с просторной террасой, обрамленной деревьями, идеально вписывается в ландшафт парка, сохраняя гармонию между историческими
+                        зданиями Петроградской стороны и современной архитектурой.
+                    </p>
+                </div>
+                <!-- Кнопка -->
+                <div class="link-to-book-wrapper">
+                    <a class="link-to-book" id="reservationButton" href="/reservation/new/">ЗАБРОНИРОВАТЬ СТОЛИК</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Секция услуг -->
+<section class="section-services mt-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Услуги Ресторана</h2>
+        <div class="row">
+            <!-- Колонка 1 -->
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <i class="fas fa-calendar-check me-2"></i> Размещение на террасе в стиле Патио до 200 гостей
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-truck me-2"></i> Размещение в VIP зале «Парк Цветов» до 30 гостей
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-map-marker-alt me-2"></i> Мы находимся в самом сердце Санкт-Петербурга: Александровский парк, д4, 5 минут от метро Горьковская
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-anchor me-2"></i> Свой причал для яхт, катеров
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-parking me-2"></i> Удобная парковка, в том числе и для туристических автобусов
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-clock me-2"></i> Возможность праздновать и шуметь 24 часа в сутки
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Колонка 2 -->
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <i class="fas fa-utensils me-2"></i> Размещение в зале «ParkKing» на 200 гостей
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-cogs me-2"></i> Техническое оснащение — полное затемнение окон для просмотра слайдов, фильмов
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-music me-2"></i> Музыкальное, световое оснащение ресторана
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-theater-masks me-2"></i> Отдельный вход и гримерки для артистов и музыкантов
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-yelp me-2"></i> Запуск фейерверков с видом на воду
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% include 'booking/contact.html' %}
+{% include 'booking/navigation/lower_menu.html' %}
+
+
+<!-- Низ меню -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+{% endblock %}

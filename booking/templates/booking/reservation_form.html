@@ -1,0 +1,73 @@
+<head>
+    <title>Бронирование</title>
+</head>
+
+
+{% load static %}
+
+{% block content %}
+{% include 'users/navigation/upper_menu.html' %}
+<!-- Раздел для заголовка страницы -->
+<section class="section-intro mt-5">
+    <header>
+        <h2 class="text-center mb-4">ЗАБРОНИРОВАТЬ СТОЛИК</h2>
+        <div class="text-center mb-4" id="availableTables">
+                Заполните все поля, чтобы увидеть количество свободных столов.
+            </div>
+    </header>
+</section>
+
+<!-- Контейнер для формы бронирования -->
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-8 col-lg-6"> <!-- Увеличили ширину формы и выровняли по центру -->
+            <!-- Форма бронирования -->
+            <form method="post" class="reservation-form p-4 border rounded bg-light shadow-sm" id="reservationForm">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <!-- Кнопка для отправки формы -->
+                <button type="submit" class="btn btn-primary btn-block mt-3">Подтвердить бронирование</button>
+            </form>
+
+            <!-- Место для отображения количества свободных столов -->
+
+        </div>
+    </div>
+</div>
+
+<!-- Подключение Bootstrap CSS для стилизации -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Подключение jQuery для упрощения работы с AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Функция для получения количества доступных столов
+    function fetchAvailableTables() {
+        var form = $('#reservationForm');
+        $.ajax({
+            url: '{% url "booking:check_available_tables" %}',
+            method: 'GET',
+            data: form.serialize(),  // Отправка данных формы
+            success: function(data) {
+                if (data.count > 0) {
+                    $('#availableTables').html('<p>Свободные столы: ' + data.count + '</p>');
+                } else {
+                    $('#availableTables').html('<p>Свободных столов нет</p>');
+                }
+            },
+            error: function() {
+                $('#availableTables').html('<p>Произошла ошибка при загрузке данных.</p>');
+            }
+        });
+    }
+
+    // Событие для обновления количества свободных столов при изменении полей формы
+    $('#reservationForm').on('change', 'input, select', function() {
+        fetchAvailableTables();
+    });
+});
+</script>
+{% include 'booking/navigation/lower_menu.html' %}
+{% endblock %}

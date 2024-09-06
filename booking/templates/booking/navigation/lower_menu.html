@@ -1,0 +1,42 @@
+<footer class="pt-4 my-md-5 pt-md-5 border-top bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md">
+                <small class="d-block mb-3 text-muted">&copy; {% now 'Y' %} - Ресторан «ParkKing» - Все права защищены</small>
+            </div>
+            <div class="col-6 col-md">
+                <h5>Категории</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" href="/">Главная</a></li>
+                    <li><a class="text-muted" href="/about">О ресторане</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5>Аккаунт</h5>
+                <ul class="list-unstyled text-small">
+                    {% if user.is_authenticated %}
+                        <li class="list-unstyled text-small">
+                            <a href="{% url 'booking:reservation_list' %}" class="text-muted">Мои бронирования</a>
+                        </li>
+                        <li class="list-unstyled text-small">
+                            <a href="{% url 'users:profile' %}" class="text-muted">Профиль</a>
+                        </li>
+                        <li class="list-unstyled text-small">
+                            <form method="post" action="{% url 'users:logout' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-muted" style="padding: 0; border: none; background: none;">Выйти</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="#" class="text-muted" data-bs-toggle="modal" data-bs-target="#loginModal">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="text-muted" data-bs-toggle="modal" data-bs-target="#registerModal">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

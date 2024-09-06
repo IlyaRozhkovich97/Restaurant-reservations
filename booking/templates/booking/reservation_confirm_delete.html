@@ -1,0 +1,40 @@
+<head>
+    <title>Отмена бронирования</title>
+</head>
+
+{% extends 'booking/base.html' %}
+
+{% block title %}
+Cancel Reservation
+{% endblock %}
+
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Вы уверены, что хотите отменить бронирование?</h1>
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Ваше бронирование</h5>
+                    <p class="card-text">
+                        <strong>Дата:</strong> {{ object.date }}<br>
+                        <strong>Время:</strong> {{ object.time }}<br>
+                        <strong>Количество гостей:</strong> {{ object.guests }}<br>
+                        <strong>Имя:</strong> {{ object.name }}<br>
+                        <strong>Email:</strong> {{ object.email }}<br>
+                        <strong>Номер телефона:</strong> {{ object.phone_number }}<br>
+                    </p>
+                    <form method="post" class="d-flex flex-column align-items-center">
+                        {% csrf_token %}
+                        <input type="submit" value="Подтвердить отмену" class="btn btn-danger w-100 mb-2">
+                        <a href="{% url 'booking:reservation_detail' object.id %}" class="btn btn-primary w-100 mb-2">Вернуться к деталям бронирования</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'booking/navigation/lower_menu.html' %}
+{% endblock %}

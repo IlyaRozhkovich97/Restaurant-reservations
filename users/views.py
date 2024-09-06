@@ -1,6 +1,7 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView, DeleteView
 from django.contrib import messages
 from .forms import UserRegisterForm, UserProfileForm, CustomAuthenticationForm
 from .models import User
@@ -8,7 +9,6 @@ from .utils import generate_token, generate_password
 from django.contrib.auth.views import LoginView
 
 
-# Класс для регистрации новых пользователей
 class RegisterView(CreateView):
     """
     Представление для регистрации новых пользователей.
@@ -27,7 +27,7 @@ class RegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('users:email_verification')
 
     def form_valid(self, form):
         """
@@ -44,7 +44,7 @@ class RegisterView(CreateView):
         user = form.save()
         user.email_user(
             subject='Верификация почты',
-            message=f'Поздравляем с регистрацией на iStore \n'
+            message=f'Поздравляем с регистрацией \n'
                     f'Для подтверждения регистрации перейдите по ссылке: \n'
                     f'http://127.0.0.1:8000/users/confirm/{user.token} \n'
                     f'Если вы не причастны к регистрации игнорируйте это письмо.'
@@ -52,7 +52,6 @@ class RegisterView(CreateView):
         return super().form_valid(form)
 
 
-# Функция для верификации пользователя по токену
 def verify_view(request, token):
     """
     Функция для верификации пользователя по уникальному токену.
@@ -70,7 +69,6 @@ def verify_view(request, token):
     return render(request, 'users/verify.html')
 
 
-# Функция для сброса пароля
 def res_password(request):
     """
     Функция для сброса пароля пользователя. Отправляет новый пароль на
@@ -94,13 +92,13 @@ def res_password(request):
             )
             user.set_password(new_password)
             user.save()
+            messages.success(request, 'Новый пароль был отправлен на вашу электронную почту.')
         else:
             messages.error(request, 'Пользователь не найден.')
         return redirect(reverse('users:reset_password'))
     return render(request, 'users/reset_password.html')
 
 
-# Класс для обновления профиля пользователя
 class ProfileView(UpdateView):
     """
     Представление для обновления профиля пользователя.
@@ -130,7 +128,6 @@ class ProfileView(UpdateView):
         return self.request.user
 
 
-# Класс для обработки входа пользователя в систему
 class CustomLoginView(LoginView):
     """
     Кастомизированное представление для входа пользователя в систему.
@@ -144,3 +141,62 @@ class CustomLoginView(LoginView):
     """
     form_class = CustomAuthenticationForm
     template_name = 'users/login.html'
+
+
+class UserListView(PermissionRequiredMixin, ListView):
+    """
+    Представление для отображения списка пользователей с необходимыми правами доступа.
+
+    Атрибуты:
+        model (Model): Модель, связанная с представлением, в данном случае `User`.
+        permission_required (str): Требуемое разрешение для доступа к этому представлению.
+    """
+    model = User
+    permission_required = 'users.view_all_users'
+
+
+class DeleteAccountView(LoginRequiredMixin, DeleteView):
+    """
+    Представление для удаления аккаунта пользователя.
+
+    Требует аутентификации пользователя и отображает страницу подтверждения удаления.
+    После успешного удаления аккаунта отображается сообщение об успехе и происходит
+    перенаправление на страницу входа.
+
+    Атрибуты:
+        model (Model): Модель, связанная с представлением, в данном случае `User`.
+        template_name (str): Путь к шаблону для отображения страницы удаления аккаунта.
+        success_url (str): URL для перенаправления после успешного удаления аккаунта.
+    """
+    model = User
+    template_name = 'users/delete_account.html'
+    success_url = reverse_lazy('users:login')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Ваш аккаунт был успешно удален.')
+        return super().delete(request, *args, **kwargs)
+
+    def get_object(self, queryset=None):
+        """
+        Возвращает объект пользователя для удаления.
+
+        Аргументы:
+            queryset (QuerySet, optional): Опциональный QuerySet для фильтрации объектов.
+
+        Возвращает:
+            User: Текущий пользователь.
+        """
+        return self.request.user
+
+
+def email_verification_view(request):
+    """
+    Представление для отображения страницы подтверждения регистрации по электронной почте.
+
+    Аргументы:
+        request (HttpRequest): Запрос от клиента.
+
+    Возвращает:
+        HttpResponse: Рендерит страницу подтверждения регистрации по электронной почте.
+    """
+    return render(request, 'users/email_verification.html')

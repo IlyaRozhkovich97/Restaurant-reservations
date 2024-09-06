@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Миссия и ценности</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Устанавливаем общий шрифт для всего документа */
+            margin: 0;
+            padding: 0;
+            h1, h2, h3, h4, h6 {
+            text-align: center; /* Центрирование заголовков */
+        }
+        .mission-container, .values-container {
+            max-width: 800px;
+            margin: 20px auto; /* Центрирование контейнеров на странице */
+            padding: 20px;
+            text-align: left; /* Выравнивание текста внутри контейнеров по левому краю */
+            border: 1px solid #ddd; /* Легкая граница для визуального отделения контейнеров */
+            border-radius: 8px; /* Скругление углов границы */
+        }
+        .mission-container h2, .values-container h2 {
+            color: #333;
+        }
+        .mission-container p, .values-container ul {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .values-list {
+            list-style-type: decimal;
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+        .values-list li {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Наша миссия</h2>
+    <div class="mission-container">
+        {% if mission_and_values %}
+            <p>{{ mission_and_values.mission|linebreaksbr }}</p>
+        {% else %}
+            <p>Информация о миссии не доступна.</p>
+        {% endif %}
+    </div>
+<h2>Наши ценности</h2>
+    <div class="values-container">
+        {% if mission_and_values %}
+
+            <ul class="values-list">
+                {% for item in mission_and_values.values.splitlines %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Информация о ценностях не доступна.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация о бронировании</title>
+</head>
+
+{% extends 'booking/base.html' %}
+
+{% block title %}
+    Информация о бронировании
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Информация о бронировании</h1>
+
+    <div class="row mt-4">
+        <div class="col-10 offset-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Ваше бронирование</h5>
+                    <p class="card-text">
+                        <strong>Дата:</strong> {{ reservation.date }}<br>
+                        <strong>Время:</strong> {{ reservation.time }}<br>
+                        <strong>Количество гостей:</strong> {{ reservation.guests }}<br>
+                        <strong>Имя:</strong> {{ reservation.name }}<br>
+                        <strong>Email:</strong> {{ reservation.email }}<br>
+                        <strong>Номер телефона:</strong> {{ reservation.phone_number }}<br>
+                        <strong>Комментарий:</strong> {{ reservation.comments }}<br>
+                    </p>
+                    <a href="{% url 'booking:reservation_list' %}" class="btn btn-primary d-block mb-2">Вернуться к списку бронирований</a>
+                    <a href="{% url 'booking:edit_reservation' reservation.id %}" class="btn btn-info d-block mb-2">Редактировать бронирование</a>
+                    <a href="{% url 'booking:cancel_reservation' reservation.id %}" class="btn btn-danger d-block mb-2">Отменить бронирование</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

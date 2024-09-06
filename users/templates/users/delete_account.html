@@ -1,0 +1,12 @@
+{% extends 'booking/base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="text-center">Удаление аккаунта</h2>
+    <p class="text-center">Вы уверены, что хотите удалить свой аккаунт? Это действие необратимо.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Удалить аккаунт</button>
+        <a href="{% url 'users:profile' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О ресторане</title>
+    <!-- Подключение CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+{% extends "booking/base.html" %}
+
+{% block title %}
+Ресторан «ParkKing»
+{% endblock %}
+
+{% block content %}
+
+
+
+{% include 'booking/navigation/upper_menu.html' %}
+
+{% include 'about_us/history.html' %}
+{% include 'about_us/mission_and_values.html' %}
+{% include 'about_us/team.html' %}
+
+{% include 'booking/navigation/lower_menu.html' %}
+
+<!-- Подключение JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+</body>
+</html>

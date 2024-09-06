@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>О ресторане</title>
+    <style>
+        .team-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .team-member {
+            flex: 0 1 calc(33.333% - 20px); /* Ширина каждого блока члена команды: треть ширины с отступами */
+            box-sizing: border-box;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .team-member img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0%; /* Круглая форма для фото */
+            max-height: 150px; /* Ограничение высоты фото */
+        }
+        .team-member h3 {
+            margin: 10px 0 5px;
+            font-size: 1.1em;
+        }
+        .team-member p {
+            font-size: 0.9em;
+            color: #555;
+        }
+        @media (max-width: 768px) {
+            .team-member {
+                flex: 0 1 calc(50% - 20px); /* Два в ряд на меньших экранах */
+            }
+        }
+        @media (max-width: 480px) {
+            .team-member {
+                flex: 0 1 100%; /* Один в ряд на самых маленьких экранах */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Наша команда</h2>
+    <div class="team-container">
+        {% for member in team_members %}
+            <div class="team-member">
+                <h3>{{ member.name }} - {{ member.position }}</h3>
+                <p>{{ member.description }}</p>
+                {% if member.photo %}
+                    <img src="{{ member.photo.url }}" alt="{{ member.name }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

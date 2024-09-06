@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>О ресторане</title>
+    <style>
+        .header {
+            margin: 20px 0; /* Отступы для заголовка */
+        }
+        .history-container {
+            max-width: 800px;
+            margin: 0 auto; /* Центрирование контейнера на странице */
+            padding: 20px;
+            text-align: left; /* Выравнивание содержимого контейнера по левому краю */
+        }
+        .history-container p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .history-container img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="header">История ресторана</h1>
+    <div class="history-container">
+        {% if history %}
+            <p>{{ history.description }}</p>
+            {% if history.image %}
+                <img src="{{ history.image.url }}" alt="История ресторана">
+            {% endif %}
+        {% else %}
+            <p>Информация о истории ресторана не доступна.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

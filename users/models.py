@@ -10,6 +10,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name='почта')
     phone = models.CharField(max_length=35, verbose_name='телефон', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
+    birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
     city = models.CharField(max_length=25, verbose_name="Город", **NULLABLE)
     country = models.CharField(max_length=50, verbose_name='страна', **NULLABLE)
     is_verified = models.BooleanField(default=False, verbose_name='Подтверждён')
