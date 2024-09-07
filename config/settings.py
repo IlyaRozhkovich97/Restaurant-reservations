@@ -183,6 +183,7 @@ CELERY_BEAT_SCHEDULE = {
     'send-confirmation-email-task': {
         'task': 'booking.tasks.send_confirmation_email_task',
         'schedule': timedelta(minutes=1),
-        'args': ('Сообщение с контактной формы ресторана «ParkKing»', 'Message Text', ['solod-spb78@yandex.ru']),  # Передайте необходимые аргументы здесь
+        'args': ('Сообщение с контактной формы ресторана «ParkKing»', 'Message Text', ['solod-spb78@yandex.ru']),  #
+        # Передайте необходимые аргументы здесь
     },
 }
