@@ -9,7 +9,6 @@ DATABASES = {
     }
 }
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -20,7 +19,3 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT')
     }
 }
-
-
-LOGIN=rozhkovich.ilya@mail.ru
-PASSWORD_ADMIN=Smash2012

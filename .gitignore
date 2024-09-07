@@ -169,6 +169,7 @@ cython_debug/
 venv/
 
 .env
-.text
 contact_info.csv
 test_smtp.py
+
+my
