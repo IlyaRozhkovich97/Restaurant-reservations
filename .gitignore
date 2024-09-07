@@ -171,5 +171,3 @@ venv/
 .env
 contact_info.csv
 test_smtp.py
-
-my/
