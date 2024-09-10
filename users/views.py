@@ -1,7 +1,7 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView, ListView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from .forms import UserRegisterForm, UserProfileForm, CustomAuthenticationForm
 from .models import User
@@ -141,18 +141,6 @@ class CustomLoginView(LoginView):
     """
     form_class = CustomAuthenticationForm
     template_name = 'users/login.html'
-
-
-class UserListView(PermissionRequiredMixin, ListView):
-    """
-    Представление для отображения списка пользователей с необходимыми правами доступа.
-
-    Атрибуты:
-        model (Model): Модель, связанная с представлением, в данном случае `User`.
-        permission_required (str): Требуемое разрешение для доступа к этому представлению.
-    """
-    model = User
-    permission_required = 'users.view_all_users'
 
 
 class DeleteAccountView(LoginRequiredMixin, DeleteView):
