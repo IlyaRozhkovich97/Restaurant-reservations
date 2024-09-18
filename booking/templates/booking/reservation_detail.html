@@ -31,7 +31,7 @@
                         <strong>Номер телефона:</strong> {{ reservation.phone_number }}<br>
                         <strong>Комментарий:</strong> {{ reservation.comments }}<br>
                     </p>
-                    <a href="{% url 'booking:reservation_list' %}" class="btn btn-primary d-block mb-2">Вернуться к списку бронирований</a>
+                    <a href="{{ back_url }}" class="btn btn-primary d-block mb-2">Вернуться к списку бронирований</a>
                     <a href="{% url 'booking:edit_reservation' reservation.id %}" class="btn btn-info d-block mb-2">Редактировать бронирование</a>
                     <a href="{% url 'booking:cancel_reservation' reservation.id %}" class="btn btn-danger d-block mb-2">Отменить бронирование</a>
                 </div>

@@ -8,7 +8,7 @@ from .views import (
     HomeView,
     ReservationUpdateView,
     CheckAvailableTablesView,
-    MyView, ContactFormView
+    MyView, ContactFormView, AllReservationsView
 )
 from booking.apps import BookingConfig
 
@@ -24,4 +24,5 @@ urlpatterns = [
     path('check-available-tables/', CheckAvailableTablesView.as_view(), name='check_available_tables'),
     path('my-view/', cache_page(60 * 15)(MyView.as_view()), name='my_view'),
     path('contact/', ContactFormView.as_view(), name='contact'),
+    path('all-reservations/', AllReservationsView.as_view(), name='all_reservations'),
 ]

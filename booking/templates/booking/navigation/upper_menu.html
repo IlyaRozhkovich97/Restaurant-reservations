@@ -33,6 +33,9 @@
             <li class="nav-item"><a href="/">Главная</a></li>
             <li class="nav-item"><a href="{% url 'about_us:about' %}">О ресторане</a></li>
             {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+                <li class="nav-item"><a href="{% url 'booking:all_reservations' %}">Все бронирования</a></li>
+            {% endif %}
                 <li class="nav-item"><a href="{% url 'booking:reservation_list' %}">Мои бронирования</a></li>
                 <li class="nav-item"><a href="{% url 'users:profile' %}">Профиль</a></li>
                 <li class="nav-item">
@@ -85,6 +88,10 @@
                 <div class="modal-body">
                     <form method="post" action="{% url 'users:register' %}">
                         {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Имя пользователя</label>
+                            <input type="text" class="form-control" id="id_first_name" name="first_name" required>
+                        </div>
                         <div class="mb-3">
                             <label for="id_email" class="form-label">Email</label>
                             <input type="email" class="form-control" id="id_email" name="email" required>

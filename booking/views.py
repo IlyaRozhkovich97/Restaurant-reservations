@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.cache import cache
@@ -74,6 +74,25 @@ class ReservationCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
                 Ваша команда
                 """,
                 [reservation.email]
+            )
+
+            # Отправка уведомления ресторану
+            send_confirmation_email_task.delay(
+                "Новое бронирование",
+                f"""
+                        Уважаемые коллеги,
+
+                        Было создано новое бронирование.
+                        Клиент: {reservation.name}
+                        Дата: {reservation.date}
+                        Время: {reservation.time}
+                        Количество гостей: {reservation.guests}
+                        Комментарии: {reservation.comments}
+
+                        С уважением,
+                        Ваша система бронирования
+                        """,
+                [settings.EMAIL_HOST_USER]
             )
 
             messages.success(self.request, "Бронирование успешно создано!")
@@ -165,6 +184,14 @@ class ReservationDetailView(LoginRequiredMixin, DetailView):
     model = Booking
     template_name = 'booking/reservation_detail.html'
     context_object_name = 'reservation'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_superuser:
+            context['back_url'] = reverse('booking:all_reservations')  # URL для суперпользователя
+        else:
+            context['back_url'] = reverse('booking:reservation_list')  # URL для обычных пользователей
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -356,3 +383,34 @@ class ContactFormView(FormView):
         messages.success(self.request, 'Ваше сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.')
 
         return super().form_valid(form)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')
+class AllReservationsView(ListView):
+    """
+    Представление для отображения всех бронирований.
+
+    Данное представление предназначено для суперпользователей и отображает список всех
+    бронирований в виде таблицы. Данные пагинируются по 10 элементов на страницу.
+
+    Атрибуты:
+    - `model` (`Booking`): Модель, данные которой будут отображены в представлении.
+    - `template_name` (`str`): Имя шаблона, который будет использоваться для рендеринга страницы.
+    - `context_object_name` (`str`): Имя переменной контекста, в которую будут помещены объекты модели.
+    - `paginate_by` (`int`): Количество объектов модели, отображаемых на одной странице.
+
+    Декораторы:
+    - `@method_decorator(user_passes_test(lambda u: u.is_superuser), name='dispatch')`:
+      Ограничивает доступ к этому представлению только суперпользователям. Если текущий пользователь
+      не является суперпользователем, он будет перенаправлен на страницу входа или другую страницу,
+      указанную в настройках.
+
+    Методы:
+    - `get_queryset()`:
+      Возвращает queryset объектов модели `Booking`, который будет использоваться для отображения
+      в представлении.
+    """
+    model = Booking
+    template_name = 'booking/all_reservations.html'
+    context_object_name = 'reservations'
+    paginate_by = 10
